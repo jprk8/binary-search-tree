@@ -28,6 +28,32 @@ class Tree {
         root.right = this.recurBST(arr, mid + 1, end);
         return root;
     }
+
+    // Iterative Insert
+    insert(value) {
+        const leaf = new Node(value);
+        if (this.root === null) return leaf;
+        let parent = null;
+        let cur = this.root;
+        while (cur != null) {
+            parent = cur;
+            if (value < cur.data) {
+                cur = cur.left;
+            } else if (value > cur.data) {
+                cur = cur.right;
+            } else {
+                return this.root; // same key already exists
+            }
+        }
+
+        if (value < parent.data) {
+            parent.left = leaf;
+        } else {
+            parent.right = leaf;
+        }
+
+        return this.root;
+    }
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -44,5 +70,9 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 };
 
 const test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-const tree = new Tree(test);
+let tree = new Tree(test);
+prettyPrint(tree.root);
+
+tree.insert(100);
+tree.insert(2);
 prettyPrint(tree.root);
