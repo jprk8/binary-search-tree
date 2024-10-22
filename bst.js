@@ -42,7 +42,7 @@ class Tree {
             } else if (value > cur.data) {
                 cur = cur.right;
             } else {
-                return // same key already exists
+                return; // same key already exists
             }
         }
 
@@ -87,11 +87,8 @@ class Tree {
 
             // If successor is the direct right child of the deleting node
             // successorParent remains null as we have initialized it
-            if (successorParent === null) {
-                cur.right = successor.right;
-            } else {
-                successorParent.left = successor.right;
-            }
+            // ELSE successorParent's left pointer will be successor's right child
+            (successorParent === null) ? cur.right = successor.right : successorParent.left = successor.right;
 
             // Replace the data(value)!
             cur.data = successor.data;
@@ -114,12 +111,41 @@ class Tree {
         return cur;
     }
 
-    inOrder(root) {
-        if (root != null) {
-            this.inOrder(root.left);
-            console.log(root.data);
-            this.inOrder(root.right);
+    levelOrder(callback) {
+        if (!callback) throw new Error('callback function required');
+        const queue = [];
+        queue.push(this.root);
+        let cur = null;
+        while (queue.length > 0) {
+            cur = queue.shift();
+            callback(cur);
+            if (cur.left != null) queue.push(cur.left);
+            if (cur.right != null) queue.push(cur.right);
         }
+    }
+
+    inOrder(callback, root = this.root) {
+        if (!callback) throw new Error('callback function required');
+        if (root === null) return;
+        this.inOrder(callback, root.left);
+        callback(root);
+        this.inOrder(callback, root.right);
+    }
+
+    preOrder(callback, root = this.root) {
+        if (!callback) throw new Error('callback function required');
+        if (root === null) return;
+        callback(root);
+        this.preOrder(callback, root.left);
+        this.preOrder(callback, root.right);
+    }
+
+    postOrder(callback, root = this.root) {
+        if (!callback) throw new Error('callback function required');
+        if (root === null) return;
+        this.postOrder(callback, root.left);
+        this.postOrder(callback, root.right);
+        callback(root);
     }
 }
 
@@ -136,12 +162,13 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     }
 };
 
+function printNode(node) {
+    if (node === null) return;
+    console.log(node.data);
+}
+
 const test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 let tree = new Tree(test);
-
-tree.insert(80);
-tree.insert(90);
 prettyPrint(tree.root);
 
-tree.deleteItem(8);
-prettyPrint(tree.root);
+tree.postOrder(printNode);
