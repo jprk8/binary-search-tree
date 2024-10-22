@@ -167,6 +167,18 @@ class Tree {
         return height;
     }
 
+    heightRecur(node) {
+        if (node === null) return -1;
+
+        let heightL = this.heightRecur(node.left);
+        let heightR = this.heightRecur(node.right);
+        if (heightL > heightR) {
+            return heightL + 1;
+        } else {
+            return heightR + 1;
+        }
+    }
+
     depth(node) {
         let depth = 0;
         let cur = null;
@@ -221,4 +233,4 @@ tree.insert(6);
 prettyPrint(tree.root);
 
 console.log(tree.height(tree.root));
-console.log(tree.depth(tree.root.right.right.right));
+console.log(tree.heightRecur(tree.root));
