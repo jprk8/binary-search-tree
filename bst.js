@@ -77,7 +77,6 @@ class Tree {
             (cur === parent.left) ? parent.left = newCur : parent.right = newCur;
         } else {
             // Node to be deleted has 2 children
-            // Need to get the successor and its parent
             let successorParent = null;
             let successor = cur.right;
             while (successor.left != null) {
@@ -89,8 +88,6 @@ class Tree {
             // successorParent remains null as we have initialized it
             // ELSE successorParent's left pointer will be successor's right child
             (successorParent === null) ? cur.right = successor.right : successorParent.left = successor.right;
-
-            // Replace the data(value)!
             cur.data = successor.data;
         }
     }
@@ -147,6 +144,49 @@ class Tree {
         this.postOrder(callback, root.right);
         callback(root);
     }
+
+    // Modified version of levelOrder traversal
+    // Make an array of current level nodes and increase height when transitioning to next level
+    // e.g. when all level array items have been consumed and their children pushed to the queue.
+    height(node) {
+        let height = 0;
+        let cur = null;
+        let queue = [];
+        let level = []; // copy the current queue over to keep track of levels
+        level.push(node);
+        while (level.length > 0) {
+            for (let i = 0; i < level.length; i++) {
+                cur = level[i];
+                if (cur.left) queue.push(cur.left);
+                if (cur.right) queue.push(cur.right);
+            }
+            level = queue.slice();
+            queue = [];
+            if (level.length > 0) height++;
+        }
+        return height;
+    }
+
+    depth(node) {
+        let depth = 0;
+        let cur = null;
+        let queue = [];
+        let level = [];
+        level.push(this.root);
+        while (level.length > 0) {
+            for (let i = 0; i < level.length; i++) {
+                cur = level[i];
+                // return current height (depth) when one of the level items matches the given node argument
+                if (cur.data === node.data) return depth;
+                if (cur.left) queue.push(cur.left);
+                if (cur.right) queue.push(cur.right);
+            }
+            level = queue.slice();
+            queue = [];
+            if (level.length > 0) depth++;
+        }
+        return depth;
+    }
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -167,8 +207,18 @@ function printNode(node) {
     console.log(node.data);
 }
 
+function printArray(arr) {
+    let str = '';
+    for (let i = 0; i < arr.length; i++) {
+        str += arr[i].data + ' ';
+    }
+    console.log('Content: ' + str); 
+}
+
 const test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 let tree = new Tree(test);
+tree.insert(6);
 prettyPrint(tree.root);
 
-tree.postOrder(printNode);
+console.log(tree.height(tree.root));
+console.log(tree.depth(tree.root.right.right.right));
