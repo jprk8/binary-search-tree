@@ -108,7 +108,7 @@ class Tree {
             }
         }
         // Node not found
-        return cur;
+        return null;
     }
 
     levelOrder(callback) {
