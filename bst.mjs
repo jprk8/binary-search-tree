@@ -1,3 +1,5 @@
+export { Tree };
+
 class Node {
     constructor(data) {
         this.data = data;
@@ -20,7 +22,6 @@ class Tree {
     }
 
     recurBST(arr, start, end) {
-        // If start > end, then the subtree is done
         if (start > end) return null;
         let mid = Math.floor((start + end) / 2);
         let root = new Node(arr[mid]);
@@ -42,7 +43,8 @@ class Tree {
             } else if (value > cur.data) {
                 cur = cur.right;
             } else {
-                return; // same key already exists
+                 // same key already exists
+                return;
             }
         }
 
@@ -64,11 +66,12 @@ class Tree {
             } else if (value > cur.data) {
                 cur = cur.right;
             } else {
-                break; // node is found
+                 // node is found
+                break;
             }
         }
-
-        if (cur === null) return cur; // node does not exist, return
+        // node does not exist, return
+        if (cur === null) return cur;
         // If there is 0 or 1 child
         if (cur.left === null || cur.right === null) {
             let newCur = (cur.left === null) ? cur.right : cur.left;
@@ -121,12 +124,16 @@ class Tree {
         }
     }
 
-    inOrder(callback, root = this.root) {
+    // Returning inOrder array for rebalancing
+    inOrder(callback, root = this.root, arr = []) {
         if (!callback) throw new Error('callback function required');
         if (root === null) return;
-        this.inOrder(callback, root.left);
+        this.inOrder(callback, root.left, arr);
         callback(root);
-        this.inOrder(callback, root.right);
+        arr.push(root.data);
+        this.inOrder(callback, root.right, arr);
+
+        return arr;
     }
 
     preOrder(callback, root = this.root) {
@@ -149,6 +156,7 @@ class Tree {
     // Make an array of current level nodes and increase height when transitioning to next level
     // e.g. when all level array items have been consumed and their children pushed to the queue.
     height(node) {
+        if (node === null) return 0;
         let height = 0;
         let cur = null;
         let queue = [];
@@ -199,38 +207,22 @@ class Tree {
         }
         return depth;
     }
+
+    isBalanced(root = this.root) {
+        if (root === null) return true;
+
+        let lh = this.height(root.left);
+        let rh = this.height(root.right);
+
+        if (Math.abs(lh - rh) <= 1 && this.isBalanced(root.left) == true && this.isBalanced(root.right) == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    rebalance() {
+        const sortedArray = this.inOrder((value) => value);
+        this.root = this.buildTree(sortedArray);
+    }
 }
-
-const prettyPrint = (node, prefix = "", isLeft = true) => {
-    if (node === null) {
-    return;
-    }
-    if (node.right !== null) {
-    prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
-    }
-    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
-    if (node.left !== null) {
-    prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
-    }
-};
-
-function printNode(node) {
-    if (node === null) return;
-    console.log(node.data);
-}
-
-function printArray(arr) {
-    let str = '';
-    for (let i = 0; i < arr.length; i++) {
-        str += arr[i].data + ' ';
-    }
-    console.log('Content: ' + str); 
-}
-
-const test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-let tree = new Tree(test);
-tree.insert(6);
-prettyPrint(tree.root);
-
-console.log(tree.height(tree.root));
-console.log(tree.heightRecur(tree.root));
