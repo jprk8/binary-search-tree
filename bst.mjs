@@ -132,24 +132,27 @@ class Tree {
         callback(root);
         arr.push(root.data);
         this.inOrder(callback, root.right, arr);
-
         return arr;
     }
 
-    preOrder(callback, root = this.root) {
+    preOrder(callback, root = this.root, arr = []) {
         if (!callback) throw new Error('callback function required');
         if (root === null) return;
         callback(root);
-        this.preOrder(callback, root.left);
-        this.preOrder(callback, root.right);
+        arr.push(root.data);
+        this.preOrder(callback, root.left, arr);
+        this.preOrder(callback, root.right, arr);
+        return arr;
     }
 
-    postOrder(callback, root = this.root) {
+    postOrder(callback, root = this.root, arr = []) {
         if (!callback) throw new Error('callback function required');
         if (root === null) return;
-        this.postOrder(callback, root.left);
-        this.postOrder(callback, root.right);
+        this.postOrder(callback, root.left, arr);
+        this.postOrder(callback, root.right, arr);
         callback(root);
+        arr.push(root.data);
+        return arr;
     }
 
     // Modified version of levelOrder traversal

@@ -13,16 +13,33 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     }
 };
 
-const test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-let tree = new Tree(test);
+function printNode(node) {
+    if (node) console.log(node.data);
+}
 
-tree.insert(8000);
-tree.insert(9000);
+const test = [1, 7, 23, 8, 9, 4, 3, 5, 67, 90, 45, 6, 36];
+let tree = new Tree(test);
+// Initialized tree (balanced)
+prettyPrint(tree.root);
+console.log(`Is Tree Balanced? ${tree.isBalanced()}`);
+
+console.log('InOrder Traversal');
+console.log(tree.inOrder(() => {}));
+
+console.log('PreOrder Traversal');
+console.log(tree.preOrder(() => {}));
+
+console.log('PostOrder Traversal');
+console.log(tree.postOrder(() => {}));
+
+console.log('Make the tree unbalanced');
+tree.insert(100);
+tree.insert(200);
 prettyPrint(tree.root);
 
-console.log(tree.isBalanced());
+console.log(`Is Tree Balanced? ${tree.isBalanced()}`);
 
+console.log('Rebalance the tree');
 tree.rebalance();
 prettyPrint(tree.root);
-
-console.log(tree.isBalanced());
+console.log(`Is Tree Balanced? ${tree.isBalanced()}`);
